@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Calculadora de Planes y Descuentos</title>
+
+  <style>
+
+    body {
+
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+      background: linear-gradient(135deg, #d0e6f7 0%, #f1f7fc 100%);
+
+      margin: 0; padding: 20px; color: #2c3e50;
+
+    }
+
+    .container {
+
+      max-width: 900px;
+
+      margin: 0 auto 40px auto;
+
+      background: #ffffffcc;
+
+      padding: 35px 40px;
+
+      border-radius: 15px;
+
+      box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+
+      backdrop-filter: saturate(180%) blur(12px);
+
+    }
+
+    h1, h2, h3 {
+
+      text-align: center;
+
+      color: #1a458a;
+
+      margin-bottom: 25px;
+
+    }
+
+    label {
+
+      font-weight: bold;
+
+      margin-top: 10px;
+
+      display: block;
+
+      color: #34495e;
+
+    }
+
+    select, button {
+
+      width: 100%;
+
+      padding: 12px;
+
+      margin-top: 8px;
+
+      margin-bottom: 16px;
+
+      border-radius: 8px;
+
+      border: 1px solid #ccc;
+
+      font-size: 16px;
+
+      transition: border-color 0.3s ease;
+
+    }
+
+    select:focus, button:focus {
+
+      border-color: #1a458a;
+
+      outline: none;
+
+    }
+
+    button {
+
+      background-color: #1a458a;
+
+      color: white;
+
+      font-weight: bold;
+
+      cursor: pointer;
+
+      box-shadow: 0 4px 8px rgba(26,69,138,0.5);
+
+      transition: background-color 0.3s ease;
+
+    }
+
+    button:hover {
+
+      background-color: #144071;
+
+    }
+
+    .result {
+
+      background-color: #ecf9ec;
+
+      padding: 20px;
+
+      border-radius: 8px;
+
+      margin-top: 20px;
+
+      font-size: 1.1rem;
+
+      color: #2c3e50;
+
+      box-shadow: inset 0 0 8px #a1d99a88;
+
+    }
+
+    .codes {
+
+      background-color: #fef3f3;
+
+      padding: 20px;
+
+      border-radius: 8px;
+
+      margin-top: 30px;
+
+      box-shadow: inset 0 0 10px #f9b3b3cc;
+
+      font-size: 1rem;
+
+    }
+
+    .codes h2 {
+
+      margin-top: 0;
+
+      color: #c0392b;
+
+    }
+
+    .highlight {
+
+      font-weight: bold;
+
+      color: #c0392b;
+
+    }
+
+    /* --- Tabs --- */
+
+    .tabs {
+
+      display: flex;
+
+      justify-content: center;
+
+      gap: 15px;
+
+      margin-bottom: 25px;
+
+      user-select: none;
+
+      flex-wrap: wrap;
+
+    }
+
+    .tab-button {
+
+      padding: 10px 22px;
+
+      background: #e2e8f7;
+
+      border-radius: 10px;
+
+      cursor: pointer;
+
+      font-weight: 600;
+
+      color: #34495e;
+
+      box-shadow: inset 0 1px 3px #fff;
+
+      transition: background-color 0.3s ease, color 0.3s ease;
+
+      flex: 1 1 auto;
+
+      max-width: 160px;
+
+      text-align: center;
+
+    }
+
+    .tab-button.active,
+
+    .tab-button:hover {
+
+      background: #1a458a;
+
+      color: white;
+
+      box-shadow: 0 4px 10px #1a458aaa;
+
+    }
+
+    /* --- Tabla --- */
+
+    table {
+
+      width: 100%;
+
+      border-collapse: collapse;
+
+      background-color: #ffffffdd;
+
+      border-radius: 10px;
+
+      overflow: hidden;
+
+      box-shadow: 0 6px 12px rgba(26, 69, 138, 0.15);
+
+      margin-top: 10px;
+
+    }
+
+    th, td {
+
+      border-bottom: 1px solid #e6eaf1;
+
+      padding: 14px 20px;
+
+      text-align: left;
+
+      font-weight: 600;
+
+      color: #34495e;
+
+    }
+
+    th {
+
+      background-color: #1a458a;
+
+      color: white;
+
+      font-size: 1.1rem;
+
+    }
+
+    tr:hover td {
+
+      background-color: #e6f0ff;
+
+      color: #144071;
+
+      font-weight: 700;
+
+      cursor: default;
+
+    }
+
+
+
+    /* Mensaje especial para combos */
+
+    .notice {
+
+      background: #d0ebd6;
+
+      border-left: 6px solid #3b9a43;
+
+      padding: 12px 16px;
+
+      margin: 20px 0 30px 0;
+
+      border-radius: 8px;
+
+      font-size: 1rem;
+
+      color: #2a5d2a;
+
+      box-shadow: 0 0 8px #3b9a4380;
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div class="container" role="main" aria-label="Calculadora de Planes y Descuentos">
+
+    <h1>Calculadora de Planes y Descuentos</h1>
+
+
+
+    <label for="cliente">Tipo de Cliente:</label>
+
+    <select id="cliente" aria-describedby="clienteHelp">
+
+      <option value="masivo">Masivo</option>
+
+      <option value="corpo">Corporativo</option>
+
+      <option value="dth">TV DTH</option>
+
+      <option value="gpon">Internet Fibra</option>
+
+      <option value="iptv">IPTV</option>
+
+    </select>
+
+    <div id="clienteHelp" style="font-size: 0.85rem; color: #555; margin-top:-12px; margin-bottom: 12px;">
+
+      Selecciona el tipo de cliente para ver los planes disponibles y descuentos.
+
+    </div>
+
+
+
+    <label for="plan">Selecciona un Plan:</label>
+
+    <select id="plan" aria-describedby="planHelp"></select>
+
+    <div id="planHelp" style="font-size: 0.85rem; color: #555; margin-top:-12px; margin-bottom: 12px;">
+
+      Elige un plan para calcular su precio final con el descuento.
+
+    </div>
+
+
+
+    <label for="descuento">Descuento Aplicable:</label>
+
+    <select id="descuento" aria-describedby="descHelp"></select>
+
+    <div id="descHelp" style="font-size: 0.85rem; color: #555; margin-top:-12px; margin-bottom: 12px;">
+
+      Selecciona el porcentaje o monto fijo de descuento para aplicar.
+
+    </div>
+
+
+
+    <button onclick="calcular()" aria-label="Calcular precio final con los valores seleccionados">Calcular Precio Final</button>
+
+
+
+    <div class="result" id="resultado" aria-live="polite" aria-atomic="true"></div>
+
+
+
+    <div class="codes" role="region" aria-labelledby="codesTitle">
+
+      <h2 id="codesTitle">Códigos para cargar en Contacto</h2>
+
+      <p><span class="highlight">1781</span> - Corporativo, recordar que la campaña no es 180 es este caso sino, 230</p>
+
+      <p><span class="highlight">1772</span> - Masivo</p>
+
+      <p><span class="highlight">1400</span> - GPON</p>
+
+      <p><span class="highlight">600</span> - DTH</p>
+
+      <p><span class="highlight">1353</span> - IPTV</p>
+
+    </div>
+
+
+
+    <h2>Planes disponibles</h2>
+
+
+
+    <!-- Pestañas para los planes -->
+
+    <div class="tabs" role="tablist" aria-label="Tipos de planes">
+
+      <button class="tab-button active" role="tab" aria-selected="true" aria-controls="tab-masivo" id="tab-btn-masivo">Masivo</button>
+
+      <button class="tab-button" role="tab" aria-selected="false" aria-controls="tab-corpo" id="tab-btn-corpo">Corporativo</button>
+
+      <button class="tab-button" role="tab" aria-selected="false" aria-controls="tab-dth" id="tab-btn-dth">TV DTH</button>
+
+      <button class="tab-button" role="tab" aria-selected="false" aria-controls="tab-gpon" id="tab-btn-gpon">Internet Fibra</button>
+
+      <button class="tab-button" role="tab" aria-selected="false" aria-controls="tab-iptv" id="tab-btn-iptv">IPTV</button>
+
+    </div>
+
+
+
+    <!-- Tab panels con las tablas -->
+
+    <div id="tab-masivo" role="tabpanel" aria-labelledby="tab-btn-masivo">
+
+      <table>
+
+        <thead><tr><th>Plan</th><th>Precio (Gs)</th></tr></thead>
+
+        <tbody id="tbody-masivo"></tbody>
+
+      </table>
+
+    </div>
+
+    <div id="tab-corpo" role="tabpanel" aria-labelledby="tab-btn-corpo" hidden>
+
+      <table>
+
+        <thead><tr><th>Plan</th><th>Precio (Gs)</th></tr></thead>
+
+        <tbody id="tbody-corpo"></tbody>
+
+      </table>
+
+    </div>
+
+    <div id="tab-dth" role="tabpanel" aria-labelledby="tab-btn-dth" hidden>
+
+      <table>
+
+        <thead><tr><th>Plan</th><th>Precio (Gs)</th></tr></thead>
+
+        <tbody id="tbody-dth"></tbody>
+
+      </table>
+
+    </div>
+
+    <div id="tab-gpon" role="tabpanel" aria-labelledby="tab-btn-gpon" hidden>
+
+      <table>
+
+        <thead><tr><th>Plan</th><th>Precio (Gs)</th></tr></thead>
+
+        <tbody id="tbody-gpon"></tbody>
+
+      </table>
+
+    </div>
+
+    <div id="tab-iptv" role="tabpanel" aria-labelledby="tab-btn-iptv" hidden>
+
+      <table>
+
+        <thead><tr><th>Plan</th><th>Precio (Gs)</th></tr></thead>
+
+        <tbody id="tbody-iptv"></tbody>
+
+      </table>
+
+    </div>
+
+
+
+    
+
+
+
+  </div>
+
+
+
+  <script>
+
+    const planes = {
+
+      masivo: [
+
+        { nombre: 'CG 7GB', precio: 145000 },
+
+        { nombre: 'CG 12GB', precio: 175000 },
+
+        { nombre: 'CG 25GB', precio: 245000 },
+
+        { nombre: 'CG 50GB', precio: 345000 },
+
+        { nombre: 'CG 100GB', precio: 500000 },
+
+        { nombre: 'CX 7GB', precio: 145000 },
+
+        { nombre: 'CX 12GB', precio: 185000 },
+
+        { nombre: 'CX 25GB', precio: 245000 },
+
+        { nombre: 'CX 50GB', precio: 345000 },
+
+        { nombre: 'CX 100GB', precio: 550000 },
+
+        { nombre: '15GB', precio: 187500 },
+
+        { nombre: '30GB', precio: 225000 },
+
+        { nombre: '50GB', precio: 300000 },
+
+        { nombre: '100GB', precio: 375000 },
+
+        { nombre: '200GB', precio: 500000 },
+
+      ],
+
+      corpo: [
+
+        { nombre: 'EC2GB', precio: 30000 },
+
+        { nombre: 'EC4GB', precio: 63000 },
+
+        { nombre: 'EC8GB', precio: 100000 },
+
+        { nombre: 'EC15GB', precio: 137500 },
+
+        { nombre: 'EC25GB', precio: 220000 },
+
+        { nombre: 'EC50GB', precio: 375000 },
+
+      ],
+
+      dth: [
+
+        { nombre: 'DTH44 TV Familiar', precio: 118000 },
+
+        { nombre: 'DTH38-05 TV Familiar', precio: 124000 },
+
+        { nombre: 'DTH45 Full HD', precio: 163000 },
+
+      ],
+
+      gpon: [
+
+        { nombre: 'IMF32 - 100MB', precio: 95000 },
+
+        { nombre: 'IMF33 - 300MB', precio: 150000 },
+
+        { nombre: 'IMF34 - 600MB', precio: 215000 },
+
+      ],
+
+      iptv: [
+
+        { nombre: 'IPTV Familiar', precio: 100000 },
+
+        { nombre: 'IPTV Full HD', precio: 135000 },
+
+      ]
+
+    };
+
+
+
+    const descuentos = {
+
+      masivo: ["0", "0.5", "0.55", "0.6"],
+
+      corpo: ["0", "0.5"],
+
+      dth: ["0", "0.2", "0.3", "0.4", "0.5"],
+
+      gpon: ["0", "0.05f", "0.1f", "0.15f", "0.2f", "0.25f", "0.3f", "0.35f", "0.45f"],
+
+      iptv: ["0", "0.5", "0.4f"]
+
+    };
+
+
+
+    // Elementos select y contenedores
+
+    const clienteSelect = document.getElementById("cliente");
+
+    const planSelect = document.getElementById("plan");
+
+    const descuentoSelect = document.getElementById("descuento");
+
+    const resultadoDiv = document.getElementById("resultado");
+
+
+
+    // Función para actualizar planes y descuentos según cliente
+
+    function actualizarPlanesYDescuentos() {
+
+      const tipo = clienteSelect.value;
+
+
+
+      // Actualizar planes
+
+      planSelect.innerHTML = "";
+
+      planes[tipo].forEach(p => {
+
+        const opt = document.createElement("option");
+
+        opt.value = p.precio;
+
+        opt.textContent = `${p.nombre} - Gs ${p.precio.toLocaleString()}`;
+
+        planSelect.appendChild(opt);
+
+      });
+
+
+
+      // Actualizar descuentos
+
+      descuentoSelect.innerHTML = "";
+
+      descuentos[tipo].forEach(d => {
+
+        const opt = document.createElement("option");
+
+        opt.value = d;
+
+        opt.textContent = d.endsWith('f')
+
+          ? `Descuento fijo: Gs ${(parseFloat(d) * 100000).toLocaleString()}`
+
+          : `${parseFloat(d) * 100}%`;
+
+        descuentoSelect.appendChild(opt);
+
+      });
+
+
+
+      // Opcional: limpiar resultado
+
+      resultadoDiv.innerHTML = "";
+
+    }
+
+
+
+    // Función cálculo final
+
+    function calcular() {
+
+      const precioBase = parseFloat(planSelect.value);
+
+      const descValue = descuentoSelect.value;
+
+      let precioFinal;
+
+      let descuento;
+
+
+
+      if(descValue.endsWith('f')) {
+
+        const monto = parseFloat(descValue) * 100000;
+
+        precioFinal = precioBase - monto;
+
+        descuento = `Gs ${monto.toLocaleString()}`;
+
+      } else {
+
+        const descNum = parseFloat(descValue);
+
+        precioFinal = precioBase * (1 - descNum);
+
+        descuento = `${descNum * 100}%`;
+
+      }
+
+
+
+      if (precioFinal < 0) precioFinal = 0;
+
+
+
+      resultadoDiv.innerHTML = `
+
+        <h3>Resultado</h3>
+
+        <p><strong>Precio Base:</strong> Gs ${precioBase.toLocaleString()}</p>
+
+        <p><strong>Descuento Aplicado:</strong> ${descuento}</p>
+
+        <p><strong>Precio Final:</strong> Gs ${precioFinal.toLocaleString()}</p>
+
+      `;
+
+    }
+
+
+
+    // Carga los planes en las tablas de cada tab
+
+    function cargarPlanes() {
+
+      for (const tipo in planes) {
+
+        const tbody = document.getElementById('tbody-' + tipo);
+
+        tbody.innerHTML = planes[tipo].map(p => `<tr><td>${p.nombre}</td><td>${p.precio.toLocaleString()}</td></tr>`).join('');
+
+      }
+
+    }
+
+
+
+    // Manejo de pestañas accesible
+
+    const tabs = document.querySelectorAll('.tab-button');
+
+    tabs.forEach(tab => {
+
+      tab.addEventListener('click', () => {
+
+        tabs.forEach(t => {
+
+          t.classList.remove('active');
+
+          t.setAttribute('aria-selected', 'false');
+
+          document.getElementById(t.getAttribute('aria-controls')).hidden = true;
+
+        });
+
+        tab.classList.add('active');
+
+        tab.setAttribute('aria-selected', 'true');
+
+        document.getElementById(tab.getAttribute('aria-controls')).hidden = false;
+
+      });
+
+    });
+
+
+
+    // Inicialización
+
+    actualizarPlanesYDescuentos();
+
+    cargarPlanes();
+
+
+
+    // Actualizar cuando cambia el tipo de cliente
+
+    clienteSelect.addEventListener("change", actualizarPlanesYDescuentos);
+
+
+
+  </script>
+
+</body>
+
+</html>
+
